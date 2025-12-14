@@ -18,7 +18,8 @@ struct ContentView: View {
             }
 
             NavigationStack {
-                GridView(title: "Your Beloved")
+                Text("How empty is this?")
+                    .font(.title3)
             }
             .tabItem {
                 Label("Favorites", systemImage: "heart")

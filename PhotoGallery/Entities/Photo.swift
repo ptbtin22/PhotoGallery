@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Photo: Identifiable {
+struct Photo: Identifiable, Equatable {
     let id: String
     let author: String
     let imageUrl: URL

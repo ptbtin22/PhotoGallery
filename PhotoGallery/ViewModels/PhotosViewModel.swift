@@ -5,32 +5,26 @@
 //  Created by Tin Pham on 13/12/25.
 //
 
-import Foundation
 import Combine
 
 @MainActor
 class PhotosViewModel: PhotosViewModelProtocol {
     @Published var photos: [Photo] = []
     @Published var isLoading = false
-    @Published var canLoadMore = false
     @Published var error: Error?
 
     private var currentPage = 1
     private let pageSize = 30
     private let networkService: NetworkServiceProtocol
-    
+    private var canLoadMore = true
+
     init(networkService: NetworkServiceProtocol = NetworkService()) {
         self.networkService = networkService
     }
     
-    func loadInitialPhotosIfNeeded() async {
-        guard photos.isEmpty else { return }
-        await loadMorePhotos()
-    }
-    
     func loadMorePhotos() async {
-        guard !isLoading else { return }
-        
+        guard !isLoading && canLoadMore else { return }
+
         isLoading = true
         error = nil
         
