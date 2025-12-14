@@ -11,32 +11,35 @@ import Combine
 @MainActor
 class PhotosViewModel: PhotosViewModelProtocol {
     @Published var photos: [Photo] = []
-    @Published var isLoading: Bool = false
+    @Published var isLoading = false
+    @Published var canLoadMore = false
     @Published var error: Error?
-    
+
     private var currentPage = 1
-    private var canLoadMore = true
+    private let pageSize = 30
     private let networkService: NetworkServiceProtocol
     
     init(networkService: NetworkServiceProtocol = NetworkService()) {
         self.networkService = networkService
     }
     
-    func loadPhotos() async {
-        guard !isLoading && canLoadMore else { return }
+    func loadInitialPhotosIfNeeded() async {
+        guard photos.isEmpty else { return }
+        await loadMorePhotos()
+    }
+    
+    func loadMorePhotos() async {
+        guard !isLoading else { return }
         
         isLoading = true
         error = nil
         
         do {
             let newPhotos = try await networkService.fetchPhotos(page: currentPage)
-            
-            if newPhotos.isEmpty {
-                canLoadMore = false
-            } else {
-                photos.append(contentsOf: newPhotos)
-                currentPage += 1
-            }
+            // Update state only on success
+            canLoadMore = newPhotos.count == pageSize
+            photos.append(contentsOf: newPhotos)
+            currentPage += 1
         } catch {
             self.error = error
         }

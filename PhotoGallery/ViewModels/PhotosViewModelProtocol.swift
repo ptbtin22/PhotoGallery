@@ -11,7 +11,9 @@ import Foundation
 protocol PhotosViewModelProtocol: ObservableObject {
     var photos: [Photo] { get }
     var isLoading: Bool { get }
+    var canLoadMore: Bool { get }
     var error: Error? { get }
     
-    func loadPhotos() async
+    func loadInitialPhotosIfNeeded() async
+    func loadMorePhotos() async
 }
