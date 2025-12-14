@@ -19,14 +19,16 @@ struct GridView: View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: 5) {
                 ForEach(viewModel.photos) { photo in
-                    PhotoCell(url: photo.thumbnailUrl)
-                        .onAppear {
-                            if photo == viewModel.photos.last {
-                                Task {
-                                    await viewModel.loadMorePhotos()
+                    NavigationLink(destination: DetailView(photo: photo)) {
+                        PhotoCell(url: photo.thumbnailUrl)
+                            .onAppear {
+                                if photo == viewModel.photos.last {
+                                    Task {
+                                        await viewModel.loadMorePhotos()
+                                    }
                                 }
                             }
-                        }
+                    }
                 }
             }
             .padding(.horizontal, 5)
